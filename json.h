@@ -1,4 +1,4 @@
-#include "json.tab.h"
+/* header file for JSON tokens, codes from json.org */
 
 #define TRUE 1
 #define FALSE 2

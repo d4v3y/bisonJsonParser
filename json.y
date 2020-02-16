@@ -14,9 +14,31 @@
 %token RBRACKET
 %token STRING
 %token NUMBER
+%token WHITESPACE
 
 %%
 
-string : STRING | STRING COMMA ;
+object
+    : '{' '}' 
+    | '{' STRING ':' value '}' 
+    | ',' value
+    ;
+
+array
+    : '[' ']'
+    | '[' value ']'
+    | ',' value
+    ;
+
+value
+    : STRING
+    | NUMBER
+    | object
+    | array
+    | TRUE
+    | FALSE
+    | NULL
+    ;
 
 %%
+
