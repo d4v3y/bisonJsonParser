@@ -23,4 +23,7 @@ json.tab.h: json.y
 	bison -d json.y
 
 clean:
-	rm json.tab.* lex.yy.* main.o
+	rm *.o json.tab.h lex.yy.* jsonpp
+
+cleanTrash:
+	rm *.o json.tab.h lex.yy.*

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "json.tab.h"
 
 extern FILE *yyin;
@@ -18,7 +17,7 @@ int main(int argc, char *argv[]) {
     }
 
     yyin = fopen(argv[1], "r");
-    
+
     if (yyin == NULL) {
         printf("can't open/read '%s'\n", argv[1]);
         exit(-1);
@@ -31,6 +30,6 @@ int main(int argc, char *argv[]) {
     } else {
         printf("no errors\n");
     }
-
+    
     return 0;
 }

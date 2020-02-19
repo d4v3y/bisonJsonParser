@@ -1,44 +1,73 @@
 %{
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include "tree.h"
 %}
 
-%token TRUE
-%token FALSE
-%token NULL
-%token LCURLY
-%token RCURLY
-%token COMMA
-%token COLON
-%token LBRACKET
-%token RBRACKET
-%token STRING
-%token NUMBER
-%token WHITESPACE
+%union {
+	double dval;
+	char* sVal;
+	char cVal;
+}
+
+// Not sure what these would be
+/* 	
+	%type <sVal> TRUE
+	%type <sVal> FALSE
+	%type <sVal> NULL
+*/
+
+%token <cVal> LCURLY
+%token <cVal> RCURLY
+%token <cVal> COMMA
+%token <cVal> COLON
+%token <cVal> LBRACKET
+%token <cVal> RBRACKET
+%token <sVal> STRINGLIT
+%token <dval> NUMBER
+
+%%
+program : LCURLY statements RCURLY ;
+
+statements : statement
+	    | statement COMMA statement
+	    ;
+
+statement : object
+	    | array
+	    ;
+
+object : variable COLON value
+	| object COMMA
+	;
+
+array : variable COLON statement
+	;
+
+variable : STRINGLIT ;
+
+value : NUMBER
+	| STRINGLIT
+	;
 
 %%
 
-object
-    : '{' '}' 
-    | '{' STRING ':' value '}' 
-    | ',' value
-    ;
+void printTree(struct treenode *n) {
 
-array
-    : '[' ']'
-    | '[' value ']'
-    | ',' value
-    ;
+  int i;
 
-value
-    : STRING
-    | NUMBER
-    | object
-    | array
-    | TRUE
-    | FALSE
-    | NULL
-    ;
+  if (n == NULL) {
+     return; /* don't segfault on NULLs */
+  }
 
-%%
-
+  printf("node %d\n", n->label);
+  
+  if (n->nkids==0) {
+     /* print stuff about leaf */
+  } else {
+     for (i = 0; inkids; i++) {
+	 print_tree(n->kids[i]);
+     }
+  }
+}
