@@ -1,29 +1,23 @@
-jsonpp: main.o lex.yy.o json.tab.o
-	cc -o jsonpp main.o lex.yy.o json.tab.o -ll
+cc = gcc
+ccopts = -ly
+lex = lex
+lexgens = lex.yy.c
+yacc = yacc
+yaccopts = -d
+yaccgens = y.tab.c y.tab.h
+prj = json
 
-main.o: main.c json.tab.h json.h
-	cc -c -g main.c
-
-lex.yy.o: lex.yy.c
-	cc -c -g lex.yy.c
-
-lex.yy.c: json.l json.h json.tab.h
-	flex json.l
-
-json.tab.o: json.tab.c
-	cc -c -g json.tab.c
-
-json.tab.c: json.y
-	bison json.y
-
-json.h: json.tab.h
-	touch json.h
-
-json.tab.h: json.y
-	bison -d json.y
+$(prj): $(lexgens) $(yaccgens)
+	$(cc) $(lexgens) $(yaccgens) $(ccopts) -o $(prj)
 
 clean:
-	rm *.o json.tab.h lex.yy.* jsonpp
+	rm $(lexgens) $(yaccgens) $(prj)
 
 cleanTrash:
-	rm *.o json.tab.h lex.yy.*
+	rm $(lexgens) $(yaccgens)
+
+$(yaccgens): $(prj).y
+	$(yacc) $(yaccopts) $(prj).y
+
+$(lexgens): $(prj).l $(yaccgens)
+	$(lex) $(prj).l

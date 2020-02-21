@@ -1,35 +1,41 @@
 %{
 
+/*
+    Davey Anguiano
+    Clinton Jeffery
+    CS 210
+    02/16/20
+*/
+
 #include <stdio.h>
-#include "tree.h"
-#include "json.tab.h"
+#include "y.tab.h"
 
 %}
 
 %option yylineno
 %option noyywrap
 
-DIGIT    [0-9]
-LETTER   [a-zA-Z]
-
-DIGITS   [{DIGIT}.\-\+]+
-HEXNUM   {#}({DIGIT | LETTER})*
-STRLIT   [ \-\\\_{LETTER}{DIGIT}\".\/]*
-
 %%
 
 [ \t\n]+        { /* skip */ }  // Ignore whitespace
-{STRLIT}	    { return ; }   // String token
-{DIGITS}        { return 6; }   // Literial digit
-'null'          TOKEN(NULL)
-'true'          TOKEN(TRUE)
-'false'         TOKEN(FALSE)   
-\{              TOKEN(LCURLY)
-\}              TOKEN(RCURLY)
-\[              TOKEN(LBRACKET)
-\]              TOKEN(RBRACKET)
-\,              TOKEN(COMMA)
-\:              TOKEN(SEMICOLON)
+
+[ \-\\\_a-zA-Z0-9\".\/]*     { 
+        return STRINGLIT; 
+    }
+
+[#0-9a-zA-Z.\-\+ ]+	        { 
+        return NUMBER;
+    }
+
+'null'          { return NULL_T; }
+'true'          { return TRUE_T; }
+'false'         { return FALSE_T; }   
+"{"             { return LCURLY; }
+"}"             { return RCURLY; }
+"["             { return LBRACKET; }
+"]"             { return RBRACKET; }
+","             { return COMMA; }
+":"             { return COLON; }
 .		        { printf("lexical error on line %d\n", yylineno); }
 
 %%

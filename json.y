@@ -1,73 +1,63 @@
 %{
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include "tree.h"
+void yyerror(char *s);
 %}
 
-%union {
-	double dval;
-	char* sVal;
-	char cVal;
+%token TRUE_T   
+%token FALSE_T  
+%token NULL_T   
+%token LCURLY  
+%token RCURLY  
+%token COMMA  
+%token LBRACKET 
+%token RBRACKET 
+%token STRINGLIT 
+%token NUMBER  
+
+%left COLON  
+%start jsonStart
+
+%%
+
+jsonStart : LCURLY pair RCURLY  {
+    $$ = calloc(1,sizeof(struct treenode));
+    $$->label = PRODRULE;
+    $$->nkids = 3;
+    $$->kids[0] = $1;
+    $$->kids[1] = $2;
+    $$->kids[2] = $3;
+};
+
+array : LBRACKET arrVal RBRACKET ;
+
+pair : variable COLON value | variable COLON value COMMA pair ;
+
+value : STRINGLIT | NUMBER | jsonStart | array ;
+
+variable : STRINGLIT | NUMBER ;
+
+arrVal : STRINGLIT | NUMBER | variable COMMA arrVal ;
+
+%%
+extern FILE *yyin;
+
+int main(int argc, char *argv[]) {
+
+  if (argc < 2) { 
+    fprintf(stderr, "usage: dates filename\n"); 
+    exit(-1); 
+  }
+
+  yyin = fopen(argv[1],"r");
+
+  if (yyparse() == 0) {
+    printf("no errors\n");
+  } else {
+    printf("there were errors\n");
+  }
 }
 
-// Not sure what these would be
-/* 	
-	%type <sVal> TRUE
-	%type <sVal> FALSE
-	%type <sVal> NULL
-*/
-
-%token <cVal> LCURLY
-%token <cVal> RCURLY
-%token <cVal> COMMA
-%token <cVal> COLON
-%token <cVal> LBRACKET
-%token <cVal> RBRACKET
-%token <sVal> STRINGLIT
-%token <dval> NUMBER
-
-%%
-program : LCURLY statements RCURLY ;
-
-statements : statement
-	    | statement COMMA statement
-	    ;
-
-statement : object
-	    | array
-	    ;
-
-object : variable COLON value
-	| object COMMA
-	;
-
-array : variable COLON statement
-	;
-
-variable : STRINGLIT ;
-
-value : NUMBER
-	| STRINGLIT
-	;
-
-%%
-
-void printTree(struct treenode *n) {
-
-  int i;
-
-  if (n == NULL) {
-     return; /* don't segfault on NULLs */
-  }
-
-  printf("node %d\n", n->label);
-  
-  if (n->nkids==0) {
-     /* print stuff about leaf */
-  } else {
-     for (i = 0; inkids; i++) {
-	 print_tree(n->kids[i]);
-     }
-  }
+void yyerror(char *s) {
+  printf("%s\n", s);
 }
