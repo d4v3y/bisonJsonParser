@@ -1,8 +1,18 @@
 %{
+
 #include <stdio.h>
 #include <stdlib.h>
+#include "tree.h"
+
 void yyerror(char *s);
+
 %}
+
+%union {
+  double dVal;
+  char* sVal;
+  struct treenode* node;
+}
 
 %token TRUE_T   
 %token FALSE_T  
@@ -20,14 +30,7 @@ void yyerror(char *s);
 
 %%
 
-jsonStart : LCURLY pair RCURLY  {
-    $$ = calloc(1,sizeof(struct treenode));
-    $$->label = PRODRULE;
-    $$->nkids = 3;
-    $$->kids[0] = $1;
-    $$->kids[1] = $2;
-    $$->kids[2] = $3;
-};
+jsonStart : LCURLY pair RCURLY ;
 
 array : LBRACKET arrVal RBRACKET ;
 
@@ -41,6 +44,25 @@ arrVal : STRINGLIT | NUMBER | variable COMMA arrVal ;
 
 %%
 extern FILE *yyin;
+
+void print_tree(struct treenode *n) {
+
+  int i;
+  
+  if (n == NULL) {
+    return; /* don't segfault on NULLs */
+  }
+
+  printf("node %d\n", n->label);
+  
+  if (n->nkids == 0) {
+    /* print stuff about leaf */
+  } else {
+    for (i = 0; inkids; i++) {
+      print_tree(n->kids[i]);
+    }
+  }
+}
 
 int main(int argc, char *argv[]) {
 

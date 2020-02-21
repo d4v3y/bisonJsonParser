@@ -1,12 +1,5 @@
 %{
 
-/*
-    Davey Anguiano
-    Clinton Jeffery
-    CS 210
-    02/16/20
-*/
-
 #include <stdio.h>
 #include "y.tab.h"
 
@@ -15,15 +8,20 @@
 %option yylineno
 %option noyywrap
 
+DIGITS [#0-9a-zA-Z.\-\+ ]+
+WORDS  [ \-\\\_a-zA-Z0-9\".\/]*
+
 %%
 
 [ \t\n]+        { /* skip */ }  // Ignore whitespace
 
-[ \-\\\_a-zA-Z0-9\".\/]*     { 
+{WORDS} { 
+        yylval.sVal = yytext;
         return STRINGLIT; 
     }
 
-[#0-9a-zA-Z.\-\+ ]+	        { 
+{DIGITS} { 
+        yylval.dVal = atof(yytext);
         return NUMBER;
     }
 
